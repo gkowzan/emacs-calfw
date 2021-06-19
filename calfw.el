@@ -789,7 +789,7 @@ keymap `cfw:calendar-mode-map'."
           :min-func 'point-min
           :max-func 'point-max
           :buffer buffer
-          :width (or width (window-width window))
+          :width (or width (window-max-chars-per-line window))
           :height (or height (window-height window))
           :clear-func (lambda ()
                         (with-current-buffer buffer
@@ -817,7 +817,7 @@ the calfw is responsible to manage the buffer and key maps."
      :min-func (lambda () (marker-position mark-begin))
      :max-func (lambda () (marker-position mark-end))
      :buffer buf
-     :width (or width (window-width window))
+     :width (or width (window-max-chars-per-line window))
      :height (or height (window-height window))
      :clear-func
      (lambda ()
@@ -847,7 +847,7 @@ the calfw is responsible to manage the buffer and key maps."
           :min-func 'point-min
           :max-func 'point-max
           :buffer buffer
-          :width (or width (window-width window))
+          :width (or width (window-max-chars-per-line window))
           :height (or height (window-height window))
           :clear-func (lambda ()
                         (with-current-buffer buffer
@@ -979,7 +979,7 @@ VIEW is a symbol of the view type."
   (let* ((dest (cfw:component-dest component))
          (buf (cfw:dest-buffer dest))
          (window (or (and buf (get-buffer-window buf)) (selected-window))))
-    (setf (cfw:dest-width dest) (or width (window-width window))
+    (setf (cfw:dest-width dest) (or width (window-max-chars-per-line window))
           (cfw:dest-height dest) (or height (window-height window))))
   (cfw:cp-update component))
 
@@ -2522,7 +2522,7 @@ With prefix arg NO-RESIZE, don't fit calendar to window size."
   (let ((cp (cfw:cp-get-component)))
     (when cp
       (unless no-resize
-        (cfw:cp-resize cp (window-width) (window-height)))
+        (cfw:cp-resize cp (window-max-chars-per-line) (window-height)))
       (loop for s in (cfw:cp-get-contents-sources cp)
             for f = (cfw:source-update s)
             if f do (funcall f))
@@ -2661,7 +2661,7 @@ TEXT is a content to show."
   "Layout details and return the text.
 DATE is a date to show. MODEL is model object."
   (let* ((EOL "\n")
-         (HLINE (cfw:rt (concat (make-string (window-width) ?-) EOL) 'cfw:face-grid))
+         (HLINE (cfw:rt (concat (make-string (window-max-chars-per-line) ?-) EOL) 'cfw:face-grid))
          (holiday (cfw:model-get-holiday-by-date date model))
          (annotation (cfw:model-get-annotation-by-date date model))
          (periods (cfw:model-get-periods-by-date date model))
