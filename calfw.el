@@ -2622,6 +2622,44 @@ Movement is forward if NUM is negative."
   (interactive "p")
   (cfw:navi-next-month-command (- (or num 1))))
 
+(defun cfw:navi-next-item-or-week-command ()
+  "Move to next item or week."
+  (interactive)
+  (let ((cp (cfw:cp-get-component))
+        (date (cfw:cursor-to-date))
+        (count (or (get-text-property (point) 'cfw:row-count) -1)))
+    (when (and cp date)
+      (let ((next (cfw:find-item (cfw:component-dest cp) date (1+ count))))
+        (if next (goto-char next)
+          (cfw:navi-next-week-command))))))
+
+(defun cfw:navi-last-item-command ()
+  "Move to last item."
+  (interactive)
+  (let ((cp (cfw:cp-get-component))
+        (date (cfw:cursor-to-date))
+        (count (or (get-text-property (point) 'cfw:row-count) -1)))
+    (when (and cp date)
+      (let ((next (cfw:find-item (cfw:component-dest cp) date (1+ count))))
+	(when next
+	  (goto-char next)
+	  (cfw:navi-last-item-command))))))
+
+(defun cfw:navi-previous-item-or-week-command ()
+  "Move to previous item or week."
+  (interactive)
+  (let ((cp (cfw:cp-get-component))
+        (date (cfw:cursor-to-date))
+        (count (or (get-text-property (point) 'cfw:row-count) -1)))
+    (when (and cp date)
+      (let ((next (cfw:find-item (cfw:component-dest cp) date (1- count))))
+        (if (or (not next) (> 0 (1- count)))
+	    (progn
+	      (cfw:navi-previous-week-command)
+	      (cfw:navi-last-item-command))
+	  (goto-char next))))))
+
+
 ;;; Detail popup
 
 (defun cfw:show-details-command ()
