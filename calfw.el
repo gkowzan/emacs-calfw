@@ -152,7 +152,7 @@ for example `cfw:read-date-command-simple' or `cfw:org-read-date-command'."
   :group 'cfw
   :type 'function)
 
-(defcustom cfw:event-format-detail "%s%e%t%l%d"
+(defcustom cfw:event-format-detail "- %s%e%t%l%d"
   "Format string of `cfw:event's for overviews (month-, week-, day-view).
  See `cfw:event-format' for possible values."
   :group 'cfw
@@ -2737,9 +2737,9 @@ DATE is a date to show. MODEL is model object."
      (loop for i in contents
            for f = (cfw:render-get-face-content i 'cfw:face-default-content)
            concat
-           (concat "- " (propertize
-                         i 'face f 'font-lock-face f
-                         'cfw:row-count (incf row-count))
+           (concat (propertize
+                    i 'face f 'font-lock-face f
+                    'cfw:row-count (incf row-count))
                    EOL)))))
 
 (defvar cfw:details-mode-map
