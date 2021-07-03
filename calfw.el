@@ -152,7 +152,12 @@ for example `cfw:read-date-command-simple' or `cfw:org-read-date-command'."
   :group 'cfw
   :type 'function)
 
-(defcustom cfw:event-format-detail "- %s%e%t%l%d"
+(defcustom cfw:event-format-detail-prefix "● "
+  "Prefix string for events in details view."
+  :group 'cfw
+  :type 'string)
+
+(defcustom cfw:event-format-detail "%s%e%t%l%d"
   "Format string of `cfw:event's for overviews (month-, week-, day-view).
  See `cfw:event-format' for possible values."
   :group 'cfw
@@ -2726,18 +2731,19 @@ DATE is a date to show. MODEL is model object."
         EOL))
      HLINE
      (loop for (begin end summary) in periods
+	   for f = (cfw:render-get-face-content summary 'cfw:face-default-content)
            for prefix = (propertize
-                         (concat (cfw:strtime begin) " - " (cfw:strtime end) " : ")
+                         (concat (cfw:strtime begin) " - " (cfw:strtime end) ":")
                          'face (cfw:render-get-face-period summary 'cfw:face-periods)
                          'font-lock-face (cfw:render-get-face-period summary 'cfw:face-periods)
                          'cfw:row-count (incf row-count))
            concat
-           (concat prefix " " summary EOL))
-
+           (concat cfw:event-format-detail-prefix prefix " "
+		   (propertize summary 'face f 'font-lock-face f) EOL))
      (loop for i in contents
            for f = (cfw:render-get-face-content i 'cfw:face-default-content)
            concat
-           (concat (propertize
+           (concat cfw:event-format-detail-prefix (propertize
                     i 'face f 'font-lock-face f
                     'cfw:row-count (incf row-count))
                    EOL)))))
