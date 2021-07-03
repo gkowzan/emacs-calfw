@@ -318,6 +318,16 @@ TEXT1 < TEXT2. This function makes no-time items in front of timed-items."
       (cfw:org-format-date t-obj lst)
     nil))
 
+(defun cfw:org-clean-description (desc)
+  "Remove redundant parts from event description."
+  (s-trim
+   (replace-regexp-in-string
+    (rx (and bol (0+ any) (or "DEADLINE:" "SCHEDULED:") (0+ blank) "<" (1+ any) ">" "\n"))
+    ""
+    (replace-regexp-in-string
+     org-property-re ""
+     desc))))
+
 (defun cfw:org-convert-event (file h-obj t-obj h-beg)
   (let ((sdate '(:month-start :day-start :year-start))
         (stime '(:hour-start :minute-start))
@@ -331,12 +341,11 @@ TEXT1 < TEXT2. This function makes no-time items in front of timed-items."
      :end-time    (cfw:org-filter-datetime t-obj etime)
      :title       (cfw:org-format-title file h-obj t-obj h-beg loc)
      :location    loc
-     :description (if (org-element-property :contents-begin h-obj)
-                      (replace-regexp-in-string
-                       " *:PROPERTIES:\n  \\(.*\\(?:\n.*\\)*?\\) :END:\n" ""
-                       (buffer-substring (org-element-property :contents-begin h-obj)
-                                         (org-element-property :contents-end h-obj)))
-                    nil))))
+     :description (when (org-element-property :contents-begin h-obj)
+		    (let ((desc (cfw:org-clean-description
+				 (buffer-substring (org-element-property :contents-begin h-obj)
+						   (org-element-property :contents-end h-obj)))))
+		      (when (s-present? desc) desc))))))
 
 (defun cfw:org-convert-org-to-calfw (file)
   (save-excursion
