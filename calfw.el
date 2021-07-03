@@ -147,6 +147,11 @@ for example `cfw:read-date-command-simple' or `cfw:org-read-date-command'."
   :group 'cfw
   :type 'string)
 
+(defcustom cfw:event-format-detail-function #'cfw:event-detail
+  "Function that extract the details string from a `cfw:event'."
+  :group 'cfw
+  :type 'function)
+
 (defcustom cfw:event-format-detail "%s%e%t%l%d"
   "Format string of `cfw:event's for overviews (month-, week-, day-view).
  See `cfw:event-format' for possible values."
@@ -1791,8 +1796,8 @@ where `event-fun' is applied if the element is a `cfw:event'."
   (cfw:render-map-event-content lst 'cfw:event-days-overview))
 
 (defun cfw:render-event-details-content (lst)
-  "[internal] Apply `cfw:event-detail' on `cfw:event's in `lst'."
-  (cfw:render-map-event-content lst 'cfw:event-detail))
+  "[internal] Apply `cfw:event-format-detail-function' on `cfw:event's in `lst'."
+  (cfw:render-map-event-content lst 'cfw:event-format-detail-function))
 
 
 
