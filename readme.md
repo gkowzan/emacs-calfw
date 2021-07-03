@@ -1,3 +1,35 @@
+## Differences from `kiwanami:master`
+- added `cfw:navi-previous-item-or-week-command` and `cfw:navi-next-item-or-week-command` commands moving between items and days when one past last item is reached (navigate whole calendar with just arrow keys)
+- use `window-max-chars-per-line` instead of `window-width` in rendering routines to support buffer-local faces of different width than the frame face
+- merged `MaximeWack/fix_org-get-timerange`
+- added formatting of event details with a custom function: `cfw:event-format-detail-function`
+  
+  Suggested custom function to remove redundant start/end times and obtain more compact rendering:
+  
+  ``` emacs-lisp
+  (defun cfw:event-format-custom (event)
+    "Format `cfw:event' with this function.
+
+  Remove redundant start and end times."
+    (cfw:tp
+     (let ((start-time (cfw:event-format-field event 'start-time 'cfw:event-format-field-time))
+	   (end-time (cfw:event-format-field event 'end-time 'cfw:event-format-field-time))
+	   (title (cfw:event-format-field event 'title 'cfw:event-format-field-string))
+	   (location (cfw:event-format-field event 'location 'cfw:event-format-field-string))
+	   (description (cfw:event-format-field event 'description 'cfw:event-format-field-string)))
+       (concat
+	(if (or (s-blank? start-time) (s-contains? start-time end-time))
+	    title
+	  (concat start-time end-time
+		  (s-trim-left (s-chop-prefix start-time title))))
+	location
+	description))
+     'cfw:source (cfw:event-source event)))
+  ```
+
+- remove org properties drawer correctly (using org regexps) and remove DEADLINE/SCHEDULE lines in details view
+- render single-day events and periods more consistetly, prefix string defined in `cfw:event-format-detail-prefix`
+
 # Calfw - A calendar framework for Emacs
 
 ## What is calfw?
