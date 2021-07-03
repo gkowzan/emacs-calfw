@@ -25,6 +25,9 @@
 	location
 	description))
      'cfw:source (cfw:event-source event)))
+	 
+  (setq cfw:event-format-description "\n%s"
+        cfw:event-format-detail-function #'cfw:event-format-custom)
   ```
 
 - remove org properties drawer correctly (using org regexps) and remove DEADLINE/SCHEDULE lines in details view
