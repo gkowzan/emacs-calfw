@@ -1802,7 +1802,7 @@ where `event-fun' is applied if the element is a `cfw:event'."
 
 (defun cfw:render-event-details-content (lst)
   "[internal] Apply `cfw:event-format-detail-function' on `cfw:event's in `lst'."
-  (cfw:render-map-event-content lst 'cfw:event-format-detail-function))
+  (cfw:render-map-event-content lst cfw:event-format-detail-function))
 
 
 
